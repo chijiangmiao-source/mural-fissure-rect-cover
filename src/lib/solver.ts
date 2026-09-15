@@ -12,7 +12,7 @@
 //  6. 并列决胜：完整方案展平为整数序列比较字典序，全局保留最小者。
 // 同时产出分支取舍轨迹，供界面逐步回放。
 
-import { Rect, flattenPlan, compareIntSeq } from './rect';
+import { Rect, canonicalPlanKey, compareIntSeq } from './rect';
 
 export interface SearchOptions {
   /** 状态数硬上限（安全熔断；截断时结果标记 truncated 且不冒充最优） */
@@ -276,7 +276,8 @@ export function searchOptimalCover(
   const greedyComplete = firstFree() === -1; // 仍处于贪心覆盖态时判断
   for (const r of greedyRects) applyRect(r, 0); // 恢复覆盖态
   if (greedyRects.length > 0 && greedyComplete) {
-    ctx.best = flattenPlan(greedyRects);
+    // 以一基整数序列保存当前最优（常量偏移与 0 起坐标等价，按需求字面使用一基坐标）
+    ctx.best = canonicalPlanKey(greedyRects);
     ctx.bestCount = greedyRects.length;
     ctx.greedyCount = greedyRects.length;
     pushEvent({
@@ -321,7 +322,7 @@ export function searchOptimalCover(
     ctx.memo.set(mask, chosen.length);
 
     if (anchorIdx0 === -1) {
-      const flat = flattenPlan(chosen);
+      const flat = canonicalPlanKey(chosen);
       if (
         ctx.best === null ||
         chosen.length < ctx.bestCount ||
@@ -427,14 +428,15 @@ export function searchOptimalCover(
     });
   }
 
+  // ctx.best 为一基展平序列，重建内部 0 起坐标时逐值减一。
   const rects: Rect[] = [];
   if (ctx.best) {
     for (let i = 0; i < ctx.best.length; i += 4) {
       rects.push({
-        top: ctx.best[i],
-        left: ctx.best[i + 1],
-        bottom: ctx.best[i + 2],
-        right: ctx.best[i + 3],
+        top: ctx.best[i] - 1,
+        left: ctx.best[i + 1] - 1,
+        bottom: ctx.best[i + 2] - 1,
+        right: ctx.best[i + 3] - 1,
       });
     }
   }

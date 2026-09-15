@@ -81,7 +81,7 @@ test.describe('精确搜索与结果展示', () => {
     await expect(page.locator('[data-testid^="patch-"]').and(page.locator('rect.patch'))).toHaveCount(4);
     // 每块贴片都不得覆盖中心孔洞 (1,1)：由贴片坐标范围保证，展示坐标中检查
     const bodyText = await page.getByTestId('patch-list').innerText();
-    expect(bodyText).toContain('上 0');
+    expect(bodyText).toContain('上 1');
   });
 
   test('狭枝预设（十字）搜索得到 3 块贴片', async ({ page }) => {
@@ -95,10 +95,11 @@ test.describe('精确搜索与结果展示', () => {
     await page.getByTestId('solve-button').click();
     await expect(page.getByTestId('optimum')).toHaveText('2');
     const list = page.getByTestId('patch-list');
-    // 字典序最小方案：顶行横条（上0 左0 下0 右1）在前，左下格（下1 右0）在后
+    // 一基展示：内部 0 起的顶行横条 [0,0,0,1] 显示为「上1 左1 下1 右2」，
+    // 左下格 [1,0,1,0] 显示为「上2 左1 下2 右1」。
     const items = list.locator('li');
-    await expect(items.nth(0)).toContainText('上 0，左 0，下 0，右 1');
-    await expect(items.nth(1)).toContainText('上 1，左 0，下 1，右 0');
+    await expect(items.nth(0)).toContainText('上 1，左 1，下 1，右 2');
+    await expect(items.nth(1)).toContainText('上 2，左 1，下 2，右 1');
   });
 
   test('贪心反例预设：精确最优 2 块，而局部贪心 3 块', async ({ page }) => {
@@ -171,6 +172,6 @@ test.describe('结果唯一性与可复算', () => {
 
     expect(opt1).toBe(opt2);
     expect(run1).toBe(run2);
-    expect(run1).toContain('上 0');
+    expect(run1).toContain('上 1');
   });
 });

@@ -5,6 +5,7 @@ import {
   MAX_SIDE,
   MIN_SIDE,
   Rect,
+  rectId,
   rectLabel,
   sortRects,
 } from './lib/rect';
@@ -222,16 +223,20 @@ export default function App() {
   const currentEvent = replayOn ? trace[traceIndex] ?? null : null;
   const replayRect = currentEvent?.rect ?? null;
   const replayAnchor = currentEvent?.anchor ?? null;
+  const anchorText =
+    currentEvent && currentEvent.anchor.row >= 0
+      ? `行${currentEvent.anchor.row + 1} 列${currentEvent.anchor.col + 1}`
+      : '—';
 
   const sortedRects: Rect[] = useMemo(
     () => (result ? sortRects(result.rects) : []),
     [result],
   );
 
-  // 最终贴片按坐标查颜色（保持与列表一致）
+  // 最终贴片按坐标查颜色（保持与列表一致）；键为内部 0 起坐标 id，不随展示偏移变化
   const rectColorMap = useMemo(() => {
     const m = new Map<string, string>();
-    sortedRects.forEach((r, i) => m.set(rectLabel(r), rectColor(i)));
+    sortedRects.forEach((r, i) => m.set(rectId(r), rectColor(i)));
     return m;
   }, [sortedRects]);
 
@@ -323,7 +328,7 @@ export default function App() {
                     className={isCrack ? 'cell crack' : 'cell intact'}
                     onClick={() => toggleCell(idx)}
                   >
-                    <title>{`行${row} 列${col}：${isCrack ? '裂格' : '完好格'}（点击切换）`}</title>
+                    <title>{`行${row + 1} 列${col + 1}：${isCrack ? '裂格' : '完好格'}（点击切换）`}</title>
                   </rect>
                 );
               }),
@@ -331,7 +336,7 @@ export default function App() {
 
             {/* 最终贴片 */}
             {sortedRects.map((r, i) => {
-              const key = rectLabel(r);
+              const key = rectId(r);
               return (
                 <rect
                   key={`r-${key}`}
@@ -347,7 +352,7 @@ export default function App() {
                   stroke={rectColorMap.get(key)}
                   strokeWidth={2}
                 >
-                  <title>{`贴片 ${i + 1}：${key}`}</title>
+                  <title>{`贴片 ${i + 1}：${rectLabel(r)}`}</title>
                 </rect>
               );
             })}
@@ -408,12 +413,12 @@ export default function App() {
 
           {result && (
             <section className="panel" data-testid="patch-list-panel">
-              <h2>各贴片坐标（上/左/下/右，自 0 起）</h2>
+              <h2>各贴片坐标（上/左/下/右，自 1 起）</h2>
               <ol className="patch-list" data-testid="patch-list">
                 {sortedRects.map((r, i) => (
-                  <li key={rectLabel(r)} data-testid={`patch-item-${i}`}>
+                  <li key={rectId(r)} data-testid={`patch-item-${i}`}>
                     <span className="swatch" style={{ background: rectColor(i) }} />
-                    贴片 {i + 1}：上 {r.top}，左 {r.left}，下 {r.bottom}，右 {r.right}
+                    贴片 {i + 1}：上 {r.top + 1}，左 {r.left + 1}，下 {r.bottom + 1}，右 {r.right + 1}
                     <span className="muted">（{rectLabel(r)}，{(r.bottom - r.top + 1) * (r.right - r.left + 1)} 格）</span>
                   </li>
                 ))}
@@ -472,7 +477,7 @@ export default function App() {
                     </span>
                   </div>
                   <div className="muted">
-                    深度 {currentEvent?.depth}　锚点 行{currentEvent?.anchor.row} 列{currentEvent?.anchor.col}
+                    深度 {currentEvent?.depth}　锚点 {anchorText}
                     　已用 {currentEvent?.used}　下界 {currentEvent?.lowerBound}
                     　当前最优 {currentEvent?.incumbent ?? '—'}
                   </div>

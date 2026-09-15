@@ -4,7 +4,7 @@
 //  3. 遍历所有铺法，按 贴片数最少 → 展平整数序列字典序最小 决定最优。
 // 该实现不依赖主搜索的任何函数与剪枝结论，只共享 Rect 类型与字典序工具。
 
-import { Rect, compareIntSeq, flattenPlan } from './rect';
+import { Rect, canonicalPlanKey, compareIntSeq } from './rect';
 
 export interface BruteForceResult {
   rects: Rect[];
@@ -107,9 +107,9 @@ export function bruteForceOptimalCover(
       const newCount = usedCount + 1;
       if (newCount > bestCount) continue;
       if (newCovered === target) {
-        // 叶点：通过全局栈重建方案以避免传参拷贝
+        // 叶点：通过全局栈重建方案，决胜使用一基整数序列
         stack.push(ri);
-        const flat = flattenPlan(stack.map((i) => rects[i]));
+        const flat = canonicalPlanKey(stack.map((i) => rects[i]));
         if (
           bestFlat === null ||
           stack.length < bestCount ||
@@ -138,10 +138,10 @@ export function bruteForceOptimalCover(
   if (bf !== null) {
     for (let i = 0; i < bf.length; i += 4) {
       resultRects.push({
-        top: bf[i],
-        left: bf[i + 1],
-        bottom: bf[i + 2],
-        right: bf[i + 3],
+        top: bf[i] - 1,
+        left: bf[i + 1] - 1,
+        bottom: bf[i + 2] - 1,
+        right: bf[i + 3] - 1,
       });
     }
   }

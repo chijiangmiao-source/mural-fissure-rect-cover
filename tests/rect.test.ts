@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import {
+  canonicalPlanKey,
   compareIntSeq,
   flattenPlan,
   rectCells,
+  rectId,
   rectLabel,
   sortRects,
   validateTiling,
@@ -43,9 +45,20 @@ describe('rect 工具', () => {
     expect(flattenPlan([a, b])).toEqual([0, 0, 0, 0, 1, 1, 1, 1]);
   });
 
-  it('rectLabel 人类可读', () => {
+  it('rectId 为内部稳定标识，rectLabel 偏移不影响其值', () => {
+    expect(rectId({ top: 0, left: 0, bottom: 1, right: 1 })).toBe('t0-l0-b1-r1');
+  });
+
+  it('rectLabel 使用一基坐标（自 1 起展示）', () => {
+    // 内部 0 起坐标 {2,1,3,4} → 展示 {3,2,4,5}
     expect(rectLabel({ top: 2, left: 1, bottom: 3, right: 4 }))
-      .toBe('(上2,左1)–(下3,右4)');
+      .toBe('(上3,左2)–(下4,右5)');
+  });
+
+  it('canonicalPlanKey 为一基决胜序列', () => {
+    const a: Rect = { top: 1, left: 1, bottom: 1, right: 1 };
+    const b: Rect = { top: 0, left: 0, bottom: 0, right: 0 };
+    expect(canonicalPlanKey([a, b])).toEqual([1, 1, 1, 1, 2, 2, 2, 2]);
   });
 });
 

@@ -39,7 +39,7 @@ export function sortRects(rects: Rect[]): Rect[] {
   });
 }
 
-/** 把方案展平为整数序列：各矩形 [上,左,下,右] 依次拼接（方案已内部排序） */
+/** 把方案展平为整数序列：各矩形 [上,左,下,右] 依次拼接（方案已内部排序，0 起内部坐标） */
 export function flattenPlan(rects: Rect[]): number[] {
   const sorted = sortRects(rects);
   const out: number[] = [];
@@ -47,6 +47,14 @@ export function flattenPlan(rects: Rect[]): number[] {
     out.push(r.top, r.left, r.bottom, r.right);
   }
   return out;
+}
+
+/**
+ * 需求规定的决胜用「一基坐标」整数序列：内部 0 起坐标整体 +1。
+ * 常量偏移不改变字典序比较结果，但展示与决胜均以一基坐标为准。
+ */
+export function canonicalPlanKey(rects: Rect[]): number[] {
+  return flattenPlan(rects).map((v) => v + 1);
 }
 
 /**
@@ -99,7 +107,16 @@ export function validateTiling(rects: Rect[], cracks: Set<number>, width: number
   return true;
 }
 
-/** 人类可读的坐标标签，如 (上2,左1)-(下3,右4) */
+/** 内部稳定标识（0 起索引），用于 React key 与 Map 键，不面向用户 */
+export function rectId(r: Rect): string {
+  return `t${r.top}-l${r.left}-b${r.bottom}-r${r.right}`;
+}
+
+/**
+ * 人类可读的一基坐标标签（行、列均自 1 起展示），如 (上3,左2)–(下4,右5)。
+ * 内部计算与存储使用 0 起索引；决胜用的整数序列整体加一常量偏移，
+ * 字典序比较结果完全等价，故最优方案唯一且不变。
+ */
 export function rectLabel(r: Rect): string {
-  return `(上${r.top},左${r.left})–(下${r.bottom},右${r.right})`;
+  return `(上${r.top + 1},左${r.left + 1})–(下${r.bottom + 1},右${r.right + 1})`;
 }
