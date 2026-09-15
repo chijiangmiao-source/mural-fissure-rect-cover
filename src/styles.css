@@ -1,0 +1,213 @@
+:root {
+  --bg: #f4f1ea;
+  --panel: #fffdf8;
+  --ink: #2b2620;
+  --muted: #7a7268;
+  --line: #d8d0c4;
+  --accent: #8a5a33;
+  --error-bg: #fdecec;
+  --error-line: #c0392b;
+  --notice-bg: #eef4fb;
+  --notice-line: #3a6ea5;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.app {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 20px 24px 40px;
+}
+
+header h1 {
+  font-size: 24px;
+  margin: 8px 0 6px;
+}
+
+.subtitle {
+  color: var(--muted);
+  margin: 0 0 16px;
+  line-height: 1.6;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 1px 2px rgba(60, 45, 30, 0.05);
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.controls label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
+input[type="number"] {
+  width: 64px;
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+button {
+  padding: 7px 14px;
+  border: 1px solid var(--accent);
+  background: #fff;
+  color: var(--accent);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+button:hover:not(:disabled) { background: #f3e9df; }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+button.primary {
+  background: var(--accent);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 10px 22px;
+}
+button.primary:hover:not(:disabled) { background: #74491f; }
+
+.spacer { flex: 1; }
+.count { color: var(--muted); font-size: 14px; }
+
+.banner {
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.banner.error {
+  background: var(--error-bg);
+  border: 1px solid var(--error-line);
+  color: var(--error-line);
+}
+.banner.notice {
+  background: var(--notice-bg);
+  border: 1px solid var(--notice-line);
+  color: var(--notice-line);
+}
+
+.main {
+  display: grid;
+  grid-template-columns: minmax(0, auto) 380px;
+  gap: 14px;
+  align-items: start;
+}
+
+@media (max-width: 1000px) {
+  .main { grid-template-columns: 1fr; }
+}
+
+.board-panel { overflow: auto; }
+
+svg { display: block; max-width: 100%; }
+
+.cell.intact {
+  fill: #fbf8f2;
+  stroke: #cfc6b6;
+  stroke-width: 1;
+  cursor: pointer;
+}
+.cell.crack {
+  fill: #4a4036;
+  stroke: #2f2922;
+  stroke-width: 1;
+  cursor: pointer;
+}
+.cell:hover { stroke: var(--accent); stroke-width: 2; }
+
+.patch { pointer-events: none; }
+
+.replay-rect { pointer-events: none; }
+.replay-anchor { fill: #e74c3c; stroke: #fff; stroke-width: 1.5; }
+
+.hint { color: var(--muted); font-size: 13px; margin: 10px 2px 0; }
+
+.side section { margin-bottom: 14px; }
+
+h2 { font-size: 15px; margin: 0 0 10px; }
+
+.stats {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 14px;
+  margin: 12px 0 0;
+  font-size: 14px;
+}
+.stats dt { color: var(--muted); }
+.stats dd { margin: 0; font-weight: 600; }
+
+.searching { color: var(--accent); font-size: 14px; }
+
+.patch-list {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+  font-size: 13.5px;
+  line-height: 1.9;
+}
+.swatch {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.replay-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+.replay-controls input[type="range"] { flex: 1; min-width: 120px; }
+
+.trace-info {
+  font-size: 13px;
+  line-height: 1.8;
+  border-top: 1px dashed var(--line);
+  padding-top: 8px;
+}
+.kind {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-size: 12px;
+  background: #eee6da;
+}
+.kind-complete { background: #dff0d8; color: #3c763d; }
+.kind-greedy { background: #e8e3f5; color: #6a4ea0; }
+.kind-prune-lb, .kind-prune-cut, .kind-prune-memo { background: #f7e0dc; color: #a94433; }
+.kind-deadend { background: #f0f0f0; color: #777; }
+.reason { color: var(--muted); }
+
+.muted { color: var(--muted); }
+
+footer { margin-top: 18px; font-size: 12.5px; }

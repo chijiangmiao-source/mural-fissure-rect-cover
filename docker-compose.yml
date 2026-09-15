@@ -1,0 +1,30 @@
+# 壁画裂隙矩形贴片精确加固 —— Docker Compose
+#
+# 发布：
+#   docker compose up --build web
+#   浏览器访问 http://localhost:${WEB_PORT:-8080}
+#   自定义宿主端口：WEB_PORT=9000 docker compose up --build web
+#
+# 一次性验收（类型检查 + 全部 Vitest，含 65536 个 4×4 图样穷举交叉验证）：
+#   docker compose build verify && docker compose run --rm verify
+
+services:
+  web:
+    build:
+      context: .
+      target: web
+    image: mural-crack-cover-web
+    ports:
+      # 宿主端口由 WEB_PORT 覆盖，容器内固定 80
+      - "${WEB_PORT:-8080}:80"
+    restart: unless-stopped
+
+  verify:
+    build:
+      context: .
+      target: verify
+    image: mural-crack-cover-verify
+    # 一次性服务：跑完即退出，不长期驻留
+    restart: "no"
+    # 容器内 Chromium 需要更大的共享内存或直接复用宿主 IPC
+    ipc: host

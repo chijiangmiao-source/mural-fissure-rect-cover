@@ -1,0 +1,17 @@
+# 依赖
+node_modules/
+
+# 构建产物
+dist/
+dist-ssr/
+
+# 测试产物
+test-results/
+playwright-report/
+coverage/
+
+# 日志与临时文件
+*.log
+npm-debug.log*
+.DS_Store
+.vite/
