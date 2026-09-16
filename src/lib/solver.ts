@@ -75,7 +75,7 @@ interface Internal {
 }
 
 /** 枚举报围锚点 (ar,ac) 的所有「全自由裂格」矩形（自由 = 裂格且未覆盖）。 */
-function enumerateFreeRects(
+export function enumerateFreeRects(
   crack: Uint8Array,
   covered: Uint8Array,
   width: number,
@@ -122,7 +122,7 @@ function area(r: Rect): number {
 }
 
 /** 矩形覆盖位掩码（BigInt，网格最多 12×12=144 位） */
-function rectMask(r: Rect, width: number): bigint {
+export function rectMask(r: Rect, width: number): bigint {
   let m = 0n;
   for (let row = r.top; row <= r.bottom; row++) {
     const base = BigInt(row * width);
@@ -136,7 +136,7 @@ function rectMask(r: Rect, width: number): bigint {
  * 集合中每个格至少需要一块独立贴片，故其大小是贴片数的合法下界。
  * 两格可同矩形覆盖 ⇔ 其包围盒内每个格当前都是自由裂格。
  */
-function packingLowerBound(
+export function packingLowerBound(
   crack: Uint8Array,
   covered: Uint8Array,
   width: number,

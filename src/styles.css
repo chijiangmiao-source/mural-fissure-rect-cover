@@ -142,6 +142,68 @@ svg { display: block; max-width: 100%; }
 
 .patch { pointer-events: none; }
 
+/* 已安装基线轮廓（未展示改造结果时提示当前安装状态） */
+.baseline-outline {
+  fill: none;
+  stroke: #96907f;
+  stroke-width: 2;
+  stroke-dasharray: 6 4;
+  pointer-events: none;
+}
+
+/* 改造图层：保留（绿）/ 新增（蓝）/ 拆除（红虚线） */
+.renov-kept {
+  fill: #2f9e44;
+  fill-opacity: 0.78;
+  stroke: #237032;
+  stroke-width: 2;
+  pointer-events: none;
+}
+.renov-added {
+  fill: #1971c2;
+  fill-opacity: 0.78;
+  stroke: #155a9e;
+  stroke-width: 2;
+  pointer-events: none;
+}
+.renov-removed {
+  fill: rgba(224, 49, 49, 0.10);
+  stroke: #e03131;
+  stroke-width: 2;
+  stroke-dasharray: 6 4;
+  pointer-events: none;
+}
+
+.legend {
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+.legend .sw {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+.legend .sw.kept { background: #2f9e44; }
+.legend .sw.added { background: #1971c2; }
+.legend .sw.removed { background: rgba(224, 49, 49, 0.15); border: 1.5px dashed #e03131; }
+
+.baseline-hint { font-size: 13px; line-height: 1.7; margin: 0 0 10px; }
+.baseline-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+.baseline-info { font-size: 13.5px; margin-bottom: 10px; }
+.baseline-info .patch-list { margin-top: 6px; }
+
+.ops-group { margin-top: 10px; }
+.ops-group-title { font-weight: 600; font-size: 13.5px; }
+.ops-group-title.kept { color: #237032; }
+.ops-group-title.added { color: #155a9e; }
+.ops-group-title.removed { color: #c92a2a; }
+
 .replay-rect { pointer-events: none; }
 .replay-anchor { fill: #e74c3c; stroke: #fff; stroke-width: 1.5; }
 
